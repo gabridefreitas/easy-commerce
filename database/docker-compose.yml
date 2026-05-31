@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: easycommerce-db
+    environment:
+      POSTGRES_DB: easycommerce
+      POSTGRES_USER: easycommerce
+      POSTGRES_PASSWORD: easycommerce
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d/init
+      - ./seeds:/docker-entrypoint-initdb.d/seeds
+      - easycommerce_data:/var/lib/postgresql/data
+    command: ["postgres", "-c", "search_path=public"]
+
+volumes:
+  easycommerce_data:
