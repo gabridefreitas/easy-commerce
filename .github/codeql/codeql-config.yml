@@ -1,0 +1,14 @@
+name: "EasyCommerce CodeQL Config"
+
+paths:
+  - app
+  - server
+
+paths-ignore:
+  - app/.next
+  - app/node_modules
+  - server/target
+  - database
+
+queries:
+  - uses: security-and-quality
