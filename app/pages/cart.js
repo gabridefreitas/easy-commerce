@@ -3,23 +3,40 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { api } from '../lib/api';
-import { subtotal } from '../utils/cart';
 
 export default function CartPage() {
-  const { items, changeQuantity, removeFromCart, cartTotal, finalTotal, coupon, setCoupon } = useCart();
+  const {
+    items,
+    isLoading,
+    changeQuantity,
+    removeFromCart,
+    cartTotal,
+    finalTotal,
+    coupon,
+    applyCouponCode,
+    clearCoupon
+  } = useCart();
+
   const [couponCode, setCouponCode] = useState('');
   const [feedback, setFeedback] = useState(null);
 
   const applyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setFeedback({ type: 'error', message: 'Enter a coupon code' });
+      return;
+    }
+
     try {
-      const { data } = await api.get(`/api/coupons/${couponCode}`);
-      setCoupon(data);
-      setFeedback({ type: 'success', message: `Coupon ${data.code} applied (${data.discountPercent}%)` });
+      await applyCouponCode(couponCode.trim());
+      setFeedback({ type: 'success', message: `Coupon ${couponCode.toUpperCase()} applied` });
     } catch (error) {
-      setCoupon(null);
       setFeedback({ type: 'error', message: 'Invalid coupon' });
     }
+  };
+
+  const removeCoupon = async () => {
+    await clearCoupon();
+    setFeedback({ type: 'info', message: 'Coupon removed' });
   };
 
   return (
@@ -29,7 +46,9 @@ export default function CartPage() {
         <Link href="/"><Button>Continue shopping</Button></Link>
       </Stack>
 
-      {items.length === 0 ? (
+      {isLoading ? (
+        <Alert severity="info">Loading cart...</Alert>
+      ) : items.length === 0 ? (
         <Alert severity="info">Your cart is empty.</Alert>
       ) : (
         <Stack spacing={2}>
@@ -39,7 +58,7 @@ export default function CartPage() {
                 <Box>
                   <Typography variant="h6">{item.title}</Typography>
                   <Typography>${Number(item.price).toFixed(2)} each</Typography>
-                  <Typography>Subtotal: ${subtotal(item).toFixed(2)}</Typography>
+                  <Typography>Subtotal: ${Number(item.subtotal).toFixed(2)}</Typography>
                 </Box>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <Button onClick={() => changeQuantity(item.id, item.quantity - 1)}>-</Button>
@@ -58,12 +77,13 @@ export default function CartPage() {
       <Stack direction="row" spacing={2}>
         <TextField label="Coupon" value={couponCode} onChange={(event) => setCouponCode(event.target.value)} />
         <Button variant="outlined" onClick={applyCoupon}>Apply coupon</Button>
+        {coupon && <Button color="inherit" onClick={removeCoupon}>Remove coupon</Button>}
       </Stack>
 
       {feedback && <Alert severity={feedback.type}>{feedback.message}</Alert>}
       {coupon && <Typography>Discount: {coupon.discountPercent}%</Typography>}
-      <Typography variant="h6">Total: ${cartTotal.toFixed(2)}</Typography>
-      <Typography variant="h5">Final total: ${finalTotal.toFixed(2)}</Typography>
+      <Typography variant="h6">Total: ${Number(cartTotal).toFixed(2)}</Typography>
+      <Typography variant="h5">Final total: ${Number(finalTotal).toFixed(2)}</Typography>
 
       {items.length === 0 ? (
         <Button variant="contained" disabled>Checkout</Button>

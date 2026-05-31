@@ -1,6 +1,5 @@
-import { Alert, Button, Container, Pagination, Snackbar, Stack, Typography } from '@mui/material';
+import { Alert, Container, Pagination, Snackbar, Stack } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { ProductCard } from '../components/ProductCard';
@@ -9,27 +8,20 @@ import { api } from '../lib/api';
 
 export default function Home({ items, currentPage, totalPages }) {
   const router = useRouter();
-  const { addToCart, items: cartItems } = useCart();
+  const { addToCart } = useCart();
   const [open, setOpen] = useState(false);
 
   const handlePageChange = (_, value) => {
     router.push(`/?page=${value - 1}`);
   };
 
-  const handleAdd = (product) => {
-    addToCart(product);
+  const handleAdd = async (product) => {
+    await addToCart(product);
     setOpen(true);
   };
 
   return (
     <Container className="py-8 space-y-6">
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h4">EasyCommerce</Typography>
-        <Link href="/cart">
-          <Button variant="outlined">Cart ({cartItems.length})</Button>
-        </Link>
-      </Stack>
-
       <Grid container spacing={2}>
         {items.map((product) => (
           <Grid key={product.id} size={{ xs: 12, sm: 6, md: 3 }}>

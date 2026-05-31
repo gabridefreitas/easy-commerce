@@ -1,6 +1,8 @@
 import { Alert, Box, Button, Container, FormControlLabel, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
+import { OrderSummary } from '../components/OrderSummary';
 import { useCart } from '../context/CartContext';
+import { api } from '../lib/api';
 
 const emptyForm = {
   name: '',
@@ -14,17 +16,28 @@ const emptyForm = {
   zipCode: ''
 };
 
+const labels = {
+  name: 'Name',
+  email: 'Email',
+  cpf: 'CPF',
+  birthDate: 'Birth date',
+  street: 'Street',
+  number: 'Number',
+  city: 'City',
+  state: 'State',
+  zipCode: 'ZIP Code'
+};
+
 export default function CheckoutPage() {
-  const { items, finalTotal, clearCart } = useCart();
+  const { clientId, items, finalTotal, isLoading } = useCart();
   const [form, setForm] = useState(emptyForm);
   const [paymentMethod, setPaymentMethod] = useState('pix');
   const [errors, setErrors] = useState({});
   const [completed, setCompleted] = useState(false);
-  const [summary, setSummary] = useState({ items: '', total: 0 });
+  const [orderSummary, setOrderSummary] = useState(null);
+  const [apiError, setApiError] = useState('');
 
   const isCartEmpty = items.length === 0;
-
-  const orderItems = useMemo(() => items.map((item) => `${item.title} x${item.quantity}`).join(', '), [items]);
 
   const validate = () => {
     const nextErrors = {};
@@ -46,22 +59,32 @@ export default function CheckoutPage() {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleFinish = () => {
-    if (!validate() || isCartEmpty || paymentMethod !== 'pix') {
+  const handleFinish = async () => {
+    setApiError('');
+
+    if (!validate() || isCartEmpty || !clientId) {
       return;
     }
 
-    setSummary({ items: orderItems, total: finalTotal });
-    setCompleted(true);
-    clearCart();
+    try {
+      const { data } = await api.post('/api/orders', {
+        clientId,
+        ...form,
+        paymentMethod
+      });
+
+      setOrderSummary(data);
+      setCompleted(true);
+    } catch (error) {
+      setApiError('Could not finish purchase. Please verify the data and try again.');
+    }
   };
 
-  if (completed) {
+  if (completed && orderSummary) {
     return (
       <Container className="py-8 space-y-4">
         <Alert severity="success">Payment confirmed! Order placed successfully.</Alert>
-      <Typography>Items: {summary.items}</Typography>
-      <Typography>Total paid: ${summary.total.toFixed(2)}</Typography>
+        <OrderSummary order={orderSummary} />
       </Container>
     );
   }
@@ -69,13 +92,17 @@ export default function CheckoutPage() {
   return (
     <Container className="py-8 space-y-4">
       <Typography variant="h4">Checkout</Typography>
-      {isCartEmpty && <Alert severity="warning">You cannot checkout with an empty cart.</Alert>}
+      {isLoading && <Alert severity="info">Loading cart...</Alert>}
+      {isCartEmpty && !isLoading && <Alert severity="warning">You cannot checkout with an empty cart.</Alert>}
+      {apiError && <Alert severity="error">{apiError}</Alert>}
 
       <Stack spacing={2}>
         {Object.keys(emptyForm).map((field) => (
           <TextField
             key={field}
-            label={field}
+            label={labels[field]}
+            type={field === 'birthDate' ? 'date' : 'text'}
+            InputLabelProps={field === 'birthDate' ? { shrink: true } : undefined}
             value={form[field]}
             onChange={(event) => setForm((prev) => ({ ...prev, [field]: event.target.value }))}
             error={Boolean(errors[field])}
@@ -92,8 +119,8 @@ export default function CheckoutPage() {
         <Alert severity="info">Pix key: easycommerce@pix.test</Alert>
       </Box>
 
-      <Typography variant="h5">Total: ${finalTotal.toFixed(2)}</Typography>
-      <Button variant="contained" onClick={handleFinish} disabled={isCartEmpty}>Finish purchase</Button>
+      <Typography variant="h5">Total: ${Number(finalTotal).toFixed(2)}</Typography>
+      <Button variant="contained" onClick={handleFinish} disabled={isCartEmpty || isLoading}>Finish purchase</Button>
     </Container>
   );
 }

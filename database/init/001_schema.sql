@@ -11,3 +11,43 @@ CREATE TABLE IF NOT EXISTS coupons (
   code VARCHAR(50) UNIQUE NOT NULL,
   discount_percent INTEGER NOT NULL CHECK (discount_percent > 0 AND discount_percent <= 100)
 );
+
+CREATE TABLE IF NOT EXISTS carts (
+  id BIGSERIAL PRIMARY KEY,
+  client_id VARCHAR(100) UNIQUE NOT NULL,
+  coupon_id BIGINT REFERENCES coupons(id)
+);
+
+CREATE TABLE IF NOT EXISTS cart_items (
+  id BIGSERIAL PRIMARY KEY,
+  cart_id BIGINT NOT NULL REFERENCES carts(id) ON DELETE CASCADE,
+  product_id BIGINT NOT NULL REFERENCES products(id),
+  quantity INTEGER NOT NULL CHECK (quantity > 0),
+  UNIQUE (cart_id, product_id)
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+  id BIGSERIAL PRIMARY KEY,
+  client_id VARCHAR(100) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  cpf VARCHAR(20) NOT NULL,
+  birth_date DATE NOT NULL,
+  street VARCHAR(255) NOT NULL,
+  number VARCHAR(50) NOT NULL,
+  city VARCHAR(255) NOT NULL,
+  state VARCHAR(255) NOT NULL,
+  zip_code VARCHAR(20) NOT NULL,
+  payment_method VARCHAR(30) NOT NULL,
+  total NUMERIC(10, 2) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+  id BIGSERIAL PRIMARY KEY,
+  order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id BIGINT NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  unit_price NUMERIC(10, 2) NOT NULL,
+  quantity INTEGER NOT NULL CHECK (quantity > 0)
+);
