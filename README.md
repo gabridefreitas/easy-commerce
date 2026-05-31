@@ -27,6 +27,21 @@ README.md
 
 ## Running locally
 
+### Option A: Run everything with root Docker Compose
+
+```bash
+cd /tmp/workspace/gabridefreitas/easy-commerce
+docker compose up --build
+```
+
+Services:
+
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:8080`
+- Database: `localhost:5432`
+
+### Option B: Run each part manually
+
 ### 1) Start PostgreSQL
 
 ```bash
