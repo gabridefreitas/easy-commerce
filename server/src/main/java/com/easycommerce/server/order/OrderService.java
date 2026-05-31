@@ -23,15 +23,15 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderSummaryResponse createOrder(CheckoutRequest request) {
-        Cart cart = cartService.getRequiredCart(request.clientId());
+    public OrderSummaryResponse createOrder(CheckoutRequest request, String clientId) {
+        Cart cart = cartService.getRequiredCart(clientId);
 
         if (cart.getItems().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart is empty");
         }
 
         OrderEntity order = new OrderEntity();
-        order.setClientId(request.clientId());
+        order.setClientId(clientId);
         order.setName(request.name());
         order.setEmail(request.email());
         order.setCpf(request.cpf());
@@ -61,7 +61,7 @@ public class OrderService {
         )));
 
         OrderEntity savedOrder = orderRepository.save(order);
-        cartService.clearCart(request.clientId());
+        cartService.clearCart(clientId);
         return toSummary(savedOrder);
     }
 

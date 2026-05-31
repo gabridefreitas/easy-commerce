@@ -29,7 +29,7 @@ const labels = {
 };
 
 export default function CheckoutPage() {
-  const { clientId, items, finalTotal, isLoading } = useCart();
+  const { items, finalTotal, isLoading } = useCart();
   const [form, setForm] = useState(emptyForm);
   const [paymentMethod, setPaymentMethod] = useState('pix');
   const [errors, setErrors] = useState({});
@@ -62,13 +62,12 @@ export default function CheckoutPage() {
   const handleFinish = async () => {
     setApiError('');
 
-    if (!validate() || isCartEmpty || !clientId) {
+    if (!validate() || isCartEmpty) {
       return;
     }
 
     try {
       const { data } = await api.post('/api/orders', {
-        clientId,
         ...form,
         paymentMethod
       });

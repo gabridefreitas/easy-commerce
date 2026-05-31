@@ -88,6 +88,9 @@ npm test
 
 ## API examples
 
+- `POST /api/auth/session`
+- `GET /api/cart`
+- `POST /api/cart/items`
 - `GET /api/products?page=0&size=4`
 - `GET /api/coupons/WELCOME10`
 

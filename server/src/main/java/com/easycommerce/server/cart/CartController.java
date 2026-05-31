@@ -1,5 +1,8 @@
 package com.easycommerce.server.cart;
 
+import com.easycommerce.server.auth.SessionService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,42 +18,63 @@ import org.springframework.web.bind.annotation.RestController;
 public class CartController {
 
     private final CartService cartService;
+    private final SessionService sessionService;
 
-    public CartController(CartService cartService) {
+    public CartController(CartService cartService, SessionService sessionService) {
         this.cartService = cartService;
+        this.sessionService = sessionService;
     }
 
-    @GetMapping("/{clientId}")
-    public CartResponse getCart(@PathVariable String clientId) {
+    @GetMapping
+    public CartResponse getCart(HttpServletRequest request, HttpServletResponse response) {
+        String clientId = sessionService.getOrCreateSessionId(request, response);
         return cartService.getCart(clientId);
     }
 
-    @PostMapping("/{clientId}/items")
-    public CartResponse addItem(@PathVariable String clientId, @Valid @RequestBody AddCartItemRequest request) {
+    @PostMapping("/items")
+    public CartResponse addItem(
+            HttpServletRequest servletRequest,
+            HttpServletResponse servletResponse,
+            @Valid @RequestBody AddCartItemRequest request
+    ) {
+        String clientId = sessionService.getOrCreateSessionId(servletRequest, servletResponse);
         return cartService.addItem(clientId, request.productId());
     }
 
-    @PutMapping("/{clientId}/items/{productId}")
+    @PutMapping("/items/{productId}")
     public CartResponse updateItemQuantity(
-            @PathVariable String clientId,
+            HttpServletRequest servletRequest,
+            HttpServletResponse servletResponse,
             @PathVariable Long productId,
-            @Valid @RequestBody UpdateCartItemRequest request
+            @Valid @RequestBody UpdateCartItemRequest body
     ) {
-        return cartService.updateItemQuantity(clientId, productId, request.quantity());
+        String clientId = sessionService.getOrCreateSessionId(servletRequest, servletResponse);
+        return cartService.updateItemQuantity(clientId, productId, body.quantity());
     }
 
-    @DeleteMapping("/{clientId}/items/{productId}")
-    public CartResponse removeItem(@PathVariable String clientId, @PathVariable Long productId) {
+    @DeleteMapping("/items/{productId}")
+    public CartResponse removeItem(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable Long productId
+    ) {
+        String clientId = sessionService.getOrCreateSessionId(request, response);
         return cartService.removeItem(clientId, productId);
     }
 
-    @PostMapping("/{clientId}/coupon/{code}")
-    public CartResponse applyCoupon(@PathVariable String clientId, @PathVariable String code) {
+    @PostMapping("/coupon/{code}")
+    public CartResponse applyCoupon(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable String code
+    ) {
+        String clientId = sessionService.getOrCreateSessionId(request, response);
         return cartService.applyCoupon(clientId, code);
     }
 
-    @DeleteMapping("/{clientId}/coupon")
-    public CartResponse clearCoupon(@PathVariable String clientId) {
+    @DeleteMapping("/coupon")
+    public CartResponse clearCoupon(HttpServletRequest request, HttpServletResponse response) {
+        String clientId = sessionService.getOrCreateSessionId(request, response);
         return cartService.clearCoupon(clientId);
     }
 }

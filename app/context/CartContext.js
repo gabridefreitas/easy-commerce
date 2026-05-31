@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { api } from '../lib/api';
-import { getOrCreateClientId } from '../utils/clientId';
 
 const CartContext = createContext(null);
 
@@ -12,72 +11,68 @@ const emptyCart = {
 };
 
 export const CartProvider = ({ children }) => {
-  const [clientId, setClientId] = useState(null);
   const [cart, setCart] = useState(emptyCart);
   const [isLoading, setIsLoading] = useState(true);
 
-  const syncCart = (data) => {
+  const syncCart = useCallback((data) => {
     setCart({
       items: data.items || [],
       coupon: data.coupon || null,
       cartTotal: Number(data.cartTotal || 0),
       finalTotal: Number(data.finalTotal || 0)
     });
-  };
-
-  const refreshCart = async (id) => {
-    const { data } = await api.get(`/api/cart/${id}`);
-    syncCart(data);
-    return data;
-  };
-
-  useEffect(() => {
-    const id = getOrCreateClientId();
-    setClientId(id);
-
-    if (!id) {
-      setIsLoading(false);
-      return;
-    }
-
-    refreshCart(id)
-      .finally(() => setIsLoading(false));
   }, []);
 
+  const refreshCart = useCallback(async () => {
+    const { data } = await api.get('/api/cart');
+    syncCart(data);
+    return data;
+  }, [syncCart]);
+
+  const addToCart = useCallback(async (product) => {
+    const { data } = await api.post('/api/cart/items', { productId: product.id });
+    syncCart(data);
+  }, [syncCart]);
+
+  const changeQuantity = useCallback(async (productId, quantity) => {
+    const { data } = await api.put(`/api/cart/items/${productId}`, { quantity: Math.max(quantity, 0) });
+    syncCart(data);
+  }, [syncCart]);
+
+  const removeFromCart = useCallback(async (productId) => {
+    const { data } = await api.delete(`/api/cart/items/${productId}`);
+    syncCart(data);
+  }, [syncCart]);
+
+  const applyCouponCode = useCallback(async (code) => {
+    const { data } = await api.post(`/api/cart/coupon/${encodeURIComponent(code)}`);
+    syncCart(data);
+  }, [syncCart]);
+
+  const clearCoupon = useCallback(async () => {
+    const { data } = await api.delete('/api/cart/coupon');
+    syncCart(data);
+  }, [syncCart]);
+
+  useEffect(() => {
+    api.post('/api/auth/session')
+      .then(() => refreshCart())
+      .finally(() => setIsLoading(false));
+  }, [refreshCart]);
+
   const value = useMemo(() => ({
-    clientId,
     isLoading,
     items: cart.items,
     coupon: cart.coupon,
     cartTotal: cart.cartTotal,
     finalTotal: cart.finalTotal,
-    refreshCart: () => (clientId ? refreshCart(clientId) : Promise.resolve(emptyCart)),
-    addToCart: async (product) => {
-      if (!clientId) return;
-      const { data } = await api.post(`/api/cart/${clientId}/items`, { productId: product.id });
-      syncCart(data);
-    },
-    changeQuantity: async (productId, quantity) => {
-      if (!clientId) return;
-      const { data } = await api.put(`/api/cart/${clientId}/items/${productId}`, { quantity: Math.max(quantity, 0) });
-      syncCart(data);
-    },
-    removeFromCart: async (productId) => {
-      if (!clientId) return;
-      const { data } = await api.delete(`/api/cart/${clientId}/items/${productId}`);
-      syncCart(data);
-    },
-    applyCouponCode: async (code) => {
-      if (!clientId) return;
-      const { data } = await api.post(`/api/cart/${clientId}/coupon/${encodeURIComponent(code)}`);
-      syncCart(data);
-    },
-    clearCoupon: async () => {
-      if (!clientId) return;
-      const { data } = await api.delete(`/api/cart/${clientId}/coupon`);
-      syncCart(data);
-    }
-  }), [clientId, isLoading, cart]);
+    refreshCart,
+    addToCart,
+    changeQuantity,
+    removeFromCart,
+    applyCouponCode,
+    clearCoupon
+  }), [isLoading, cart, refreshCart, addToCart, changeQuantity, removeFromCart, applyCouponCode, clearCoupon]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

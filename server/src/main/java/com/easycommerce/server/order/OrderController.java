@@ -1,5 +1,8 @@
 package com.easycommerce.server.order;
 
+import com.easycommerce.server.auth.SessionService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,14 +16,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final OrderService orderService;
+    private final SessionService sessionService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, SessionService sessionService) {
         this.orderService = orderService;
+        this.sessionService = sessionService;
     }
 
     @PostMapping
-    public OrderSummaryResponse checkout(@Valid @RequestBody CheckoutRequest request) {
-        return orderService.createOrder(request);
+    public OrderSummaryResponse checkout(
+            HttpServletRequest servletRequest,
+            HttpServletResponse servletResponse,
+            @Valid @RequestBody CheckoutRequest request
+    ) {
+        String clientId = sessionService.getOrCreateSessionId(servletRequest, servletResponse);
+        OrderSummaryResponse response = orderService.createOrder(request, clientId);
+        sessionService.rotateSession(servletRequest, servletResponse);
+        return response;
     }
 
     @GetMapping("/{orderId}")

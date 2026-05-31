@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public record CheckoutRequest(
-        @NotBlank String clientId,
         @NotBlank String name,
         @Email @NotBlank String email,
         @NotBlank String cpf,
