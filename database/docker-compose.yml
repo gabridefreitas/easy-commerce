@@ -10,7 +10,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./init:/docker-entrypoint-initdb.d/init
+      - ./init/001_schema.sql:/docker-entrypoint-initdb.d/001_schema.sql
+      - ./init/002_seed.sql:/docker-entrypoint-initdb.d/002_seed.sql
       - ./seeds:/docker-entrypoint-initdb.d/seeds
       - easycommerce_data:/var/lib/postgresql/data
     command: ["postgres", "-c", "search_path=public"]

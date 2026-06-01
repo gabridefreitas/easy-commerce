@@ -1,6 +1,10 @@
 package com.easycommerce.server.cart;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.easycommerce.server.coupon.Coupon;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,8 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "carts")
@@ -56,7 +58,19 @@ public class Cart {
         this.coupon = coupon;
     }
 
+    public void addItem(CartItem item) {
+        this.items.add(item);
+    }
+
+    public void removeItem(CartItem item) {
+        this.items.remove(item);
+    }
+
+    public void clearItems() {
+        this.items.clear();
+    }
+
     public List<CartItem> getItems() {
-        return items;
+        return new ArrayList<>(items);
     }
 }

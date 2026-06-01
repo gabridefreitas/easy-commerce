@@ -1,16 +1,18 @@
 package com.easycommerce.server.auth;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Service
 public class SessionService {
@@ -22,8 +24,7 @@ public class SessionService {
     public SessionService(
             @Value("${app.auth.cookie-name:easycommerce_session}") String cookieName,
             @Value("${app.auth.session-ttl:PT12H}") Duration sessionTtl,
-            @Value("${app.auth.cookie-secure:false}") boolean forceSecureCookie
-    ) {
+            @Value("${app.auth.cookie-secure:false}") boolean forceSecureCookie) {
         this.cookieName = cookieName;
         this.sessionTtl = sessionTtl;
         this.forceSecureCookie = forceSecureCookie;

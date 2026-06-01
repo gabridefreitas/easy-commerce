@@ -1,6 +1,7 @@
 package com.easycommerce.server.cart;
 
 import com.easycommerce.server.product.Product;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

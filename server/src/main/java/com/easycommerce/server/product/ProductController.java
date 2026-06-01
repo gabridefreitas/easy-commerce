@@ -20,8 +20,7 @@ public class ProductController {
     @GetMapping
     public ProductPageResponse listProducts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "4") int size
-    ) {
+            @RequestParam(defaultValue = "4") int size) {
         Page<Product> products = productRepository.findAll(PageRequest.of(page, size));
         return new ProductPageResponse(products.getContent(), products.getNumber(), products.getTotalPages());
     }

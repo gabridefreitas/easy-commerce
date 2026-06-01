@@ -1,8 +1,8 @@
-import { Alert, Container } from '@mui/material';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { OrderSummary } from '../../components/OrderSummary';
-import { api } from '../../lib/api';
+import { Alert, Container } from "@mui/material";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { OrderSummary } from "../../components/OrderSummary";
+import { api } from "../../lib/api";
 
 export default function OrderTrackingPage() {
   const router = useRouter();
@@ -10,7 +10,7 @@ export default function OrderTrackingPage() {
 
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!router.isReady || !id) {
@@ -21,16 +21,16 @@ export default function OrderTrackingPage() {
 
     const loadOrder = async () => {
       setLoading(true);
-      setError('');
+      setError("");
       try {
         const { data } = await api.get(`/api/orders/${id}`);
         if (active) {
           setOrder(data);
         }
-      } catch (requestError) {
+      } catch {
         if (active) {
           setOrder(null);
-          setError('Pedido não encontrado.');
+          setError("Pedido não encontrado.");
         }
       } finally {
         if (active) {

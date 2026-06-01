@@ -1,16 +1,18 @@
 package com.easycommerce.server.cart;
 
-import com.easycommerce.server.coupon.Coupon;
-import com.easycommerce.server.coupon.CouponRepository;
-import com.easycommerce.server.product.Product;
-import com.easycommerce.server.product.ProductRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.easycommerce.server.coupon.Coupon;
+import com.easycommerce.server.coupon.CouponRepository;
+import com.easycommerce.server.product.Product;
+import com.easycommerce.server.product.ProductRepository;
 
 @Service
 public class CartService {
@@ -24,8 +26,7 @@ public class CartService {
             CartRepository cartRepository,
             CartItemRepository cartItemRepository,
             ProductRepository productRepository,
-            CouponRepository couponRepository
-    ) {
+            CouponRepository couponRepository) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.productRepository = productRepository;
@@ -47,8 +48,7 @@ public class CartService {
         cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
                 .ifPresentOrElse(
                         cartItem -> cartItem.setQuantity(cartItem.getQuantity() + 1),
-                        () -> cart.getItems().add(new CartItem(cart, product, 1))
-                );
+                        () -> cart.addItem(new CartItem(cart, product, 1)));
 
         return toResponse(cartRepository.save(cart));
     }
@@ -61,7 +61,7 @@ public class CartService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found in cart"));
 
         if (quantity == 0) {
-            cart.getItems().remove(item);
+            cart.removeItem(item);
             cartItemRepository.delete(item);
         } else {
             item.setQuantity(quantity);
@@ -95,7 +95,7 @@ public class CartService {
     @Transactional
     public void clearCart(String clientId) {
         Cart cart = getOrCreateCart(clientId);
-        cart.getItems().clear();
+        cart.clearItems();
         cart.setCoupon(null);
         cartRepository.save(cart);
     }
@@ -122,8 +122,7 @@ public class CartService {
                             item.getProduct().getImage(),
                             item.getProduct().getDescription(),
                             item.getQuantity(),
-                            subtotal
-                    );
+                            subtotal);
                 })
                 .toList();
 

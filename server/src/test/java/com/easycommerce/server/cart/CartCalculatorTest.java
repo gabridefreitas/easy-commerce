@@ -1,8 +1,8 @@
 package com.easycommerce.server.cart;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.math.BigDecimal;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 class CartCalculatorTest {

@@ -1,7 +1,7 @@
-import { Box, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { AppHeader } from '../components/AppHeader';
-import { CartProvider } from '../context/CartContext';
-import '../styles/globals.css';
+import { Box, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { AppHeader } from "../components/AppHeader";
+import { CartProvider } from "../context/CartContext";
+import "../styles/globals.css";
 
 const theme = createTheme();
 

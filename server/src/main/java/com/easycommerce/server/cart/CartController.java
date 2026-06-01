@@ -1,9 +1,5 @@
 package com.easycommerce.server.cart;
 
-import com.easycommerce.server.auth.SessionService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +8,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.easycommerce.server.auth.SessionService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -35,8 +37,7 @@ public class CartController {
     public CartResponse addItem(
             HttpServletRequest servletRequest,
             HttpServletResponse servletResponse,
-            @Valid @RequestBody AddCartItemRequest request
-    ) {
+            @Valid @RequestBody AddCartItemRequest request) {
         String clientId = sessionService.getOrCreateSessionId(servletRequest, servletResponse);
         return cartService.addItem(clientId, request.productId());
     }
@@ -46,8 +47,7 @@ public class CartController {
             HttpServletRequest servletRequest,
             HttpServletResponse servletResponse,
             @PathVariable Long productId,
-            @Valid @RequestBody UpdateCartItemRequest body
-    ) {
+            @Valid @RequestBody UpdateCartItemRequest body) {
         String clientId = sessionService.getOrCreateSessionId(servletRequest, servletResponse);
         return cartService.updateItemQuantity(clientId, productId, body.quantity());
     }
@@ -56,8 +56,7 @@ public class CartController {
     public CartResponse removeItem(
             HttpServletRequest request,
             HttpServletResponse response,
-            @PathVariable Long productId
-    ) {
+            @PathVariable Long productId) {
         String clientId = sessionService.getOrCreateSessionId(request, response);
         return cartService.removeItem(clientId, productId);
     }
@@ -66,8 +65,7 @@ public class CartController {
     public CartResponse applyCoupon(
             HttpServletRequest request,
             HttpServletResponse response,
-            @PathVariable String code
-    ) {
+            @PathVariable String code) {
         String clientId = sessionService.getOrCreateSessionId(request, response);
         return cartService.applyCoupon(clientId, code);
     }

@@ -1,33 +1,62 @@
-import { Box, Divider, List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { formatCurrencyBRL } from "../utils/format";
 
 export function OrderSummary({ order }) {
+  const {
+    birthDate,
+    city,
+    cpf,
+    email,
+    id,
+    items,
+    name,
+    number,
+    paymentMethod,
+    state,
+    street,
+    total,
+    zipCode,
+  } = order ?? {};
+
   return (
     <Stack spacing={2}>
-      <Typography variant="h5">Resumo do pedido #{order.id}</Typography>
+      <Typography variant="h5">Resumo do pedido #{id}</Typography>
 
       <Box>
         <Typography variant="h6">Dados do usuário</Typography>
-        <Typography>Nome: {order.name}</Typography>
-        <Typography>Email: {order.email}</Typography>
-        <Typography>CPF: {order.cpf}</Typography>
-        <Typography>Data de nascimento: {order.birthDate}</Typography>
+        <Typography>Nome: {name}</Typography>
+        <Typography>Email: {email}</Typography>
+        <Typography>CPF: {cpf}</Typography>
+        <Typography>Data de nascimento: {birthDate}</Typography>
       </Box>
 
       <Divider />
 
       <Box>
         <Typography variant="h6">Endereço</Typography>
-        <Typography>{order.street}, {order.number}</Typography>
-        <Typography>{order.city} - {order.state}</Typography>
-        <Typography>CEP: {order.zipCode}</Typography>
+        <Typography>
+          {street}, {number}
+        </Typography>
+        <Typography>
+          {city} - {state}
+        </Typography>
+        <Typography>CEP: {zipCode}</Typography>
       </Box>
 
       <Divider />
 
       <Box>
         <Typography variant="h6">Pagamento</Typography>
-        <Typography>Método: {order.paymentMethod}</Typography>
-        <Typography>Total pago: ${Number(order.total).toFixed(2)}</Typography>
+        <Typography>Método: {paymentMethod}</Typography>
+        <Typography>Total pago: {formatCurrencyBRL(total)}</Typography>
       </Box>
 
       <Divider />
@@ -35,11 +64,13 @@ export function OrderSummary({ order }) {
       <Box>
         <Typography variant="h6">Itens</Typography>
         <List>
-          {order.items.map((item) => (
+          {items.map((item) => (
             <ListItem key={`${item.productId}-${item.title}`} disablePadding>
               <ListItemText
                 primary={`${item.title} x${item.quantity}`}
-                secondary={`$${Number(item.unitPrice).toFixed(2)} cada - Subtotal: $${Number(item.subtotal).toFixed(2)}`}
+                secondary={`${formatCurrencyBRL(
+                  item.unitPrice
+                )} cada - Subtotal: ${formatCurrencyBRL(item.subtotal)}`}
               />
             </ListItem>
           ))}

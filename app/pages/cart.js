@@ -1,8 +1,18 @@
-import { Alert, Box, Button, Container, IconButton, Stack, TextField, Typography } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Link from 'next/link';
-import { useState } from 'react';
-import { useCart } from '../context/CartContext';
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Link from "next/link";
+import { useState } from "react";
+import { useCart } from "../context/CartContext";
+import { formatCurrencyBRL } from "../utils/format";
 
 export default function CartPage() {
   const {
@@ -14,57 +24,80 @@ export default function CartPage() {
     finalTotal,
     coupon,
     applyCouponCode,
-    clearCoupon
+    clearCoupon,
   } = useCart();
 
-  const [couponCode, setCouponCode] = useState('');
+  const [couponCode, setCouponCode] = useState("");
   const [feedback, setFeedback] = useState(null);
 
   const applyCoupon = async () => {
     if (!couponCode.trim()) {
-      setFeedback({ type: 'error', message: 'Enter a coupon code' });
+      setFeedback({ type: "error", message: "Digite um cupom" });
       return;
     }
 
     try {
       await applyCouponCode(couponCode.trim());
-      setFeedback({ type: 'success', message: `Coupon ${couponCode.toUpperCase()} applied` });
-    } catch (error) {
-      setFeedback({ type: 'error', message: 'Invalid coupon' });
+      setFeedback({
+        type: "success",
+        message: `Cupom ${couponCode.toUpperCase()} aplicado`,
+      });
+    } catch {
+      setFeedback({ type: "error", message: "Cupom inválido" });
     }
   };
 
   const removeCoupon = async () => {
     await clearCoupon();
-    setFeedback({ type: 'info', message: 'Coupon removed' });
+    setFeedback({ type: "info", message: "Cupom removido" });
   };
 
   return (
     <Container className="py-8 space-y-4">
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h4">Your cart</Typography>
-        <Link href="/"><Button>Continue shopping</Button></Link>
+        <Typography variant="h4">Seu carrinho</Typography>
+        <Link href="/">
+          <Button>Continuar Comprando</Button>
+        </Link>
       </Stack>
 
       {isLoading ? (
-        <Alert severity="info">Loading cart...</Alert>
+        <Alert severity="info">Carregando carrinho...</Alert>
       ) : items.length === 0 ? (
-        <Alert severity="info">Your cart is empty.</Alert>
+        <Alert severity="info">Seu carrinho está vazio.</Alert>
       ) : (
         <Stack spacing={2}>
           {items.map((item) => (
             <Box key={item.id} className="p-4 rounded border bg-white">
-              <Stack direction="row" justifyContent="space-between" spacing={2} alignItems="center">
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                spacing={2}
+                alignItems="center"
+              >
                 <Box>
                   <Typography variant="h6">{item.title}</Typography>
-                  <Typography>${Number(item.price).toFixed(2)} each</Typography>
-                  <Typography>Subtotal: ${Number(item.subtotal).toFixed(2)}</Typography>
+                  <Typography>{formatCurrencyBRL(item.price)} cada</Typography>
+                  <Typography>
+                    Subtotal: {formatCurrencyBRL(item.subtotal)}
+                  </Typography>
                 </Box>
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <Button onClick={() => changeQuantity(item.id, item.quantity - 1)}>-</Button>
+                  <Button
+                    onClick={() => changeQuantity(item.id, item.quantity - 1)}
+                  >
+                    -
+                  </Button>
                   <Typography>{item.quantity}</Typography>
-                  <Button onClick={() => changeQuantity(item.id, item.quantity + 1)}>+</Button>
-                  <IconButton onClick={() => removeFromCart(item.id)} aria-label="remove item">
+                  <Button
+                    onClick={() => changeQuantity(item.id, item.quantity + 1)}
+                  >
+                    +
+                  </Button>
+                  <IconButton
+                    onClick={() => removeFromCart(item.id)}
+                    aria-label="Remover item"
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </Stack>
@@ -75,21 +108,37 @@ export default function CartPage() {
       )}
 
       <Stack direction="row" spacing={2}>
-        <TextField label="Coupon" value={couponCode} onChange={(event) => setCouponCode(event.target.value)} />
-        <Button variant="outlined" onClick={applyCoupon}>Apply coupon</Button>
-        {coupon && <Button color="inherit" onClick={removeCoupon}>Remove coupon</Button>}
+        <TextField
+          label="Cupom"
+          value={couponCode}
+          onChange={(event) => setCouponCode(event.target.value)}
+        />
+        <Button variant="outlined" onClick={applyCoupon}>
+          Aplicar cupom
+        </Button>
+        {coupon && (
+          <Button color="inherit" onClick={removeCoupon}>
+            Remover cupom
+          </Button>
+        )}
       </Stack>
 
       {feedback && <Alert severity={feedback.type}>{feedback.message}</Alert>}
-      {coupon && <Typography>Discount: {coupon.discountPercent}%</Typography>}
-      <Typography variant="h6">Total: ${Number(cartTotal).toFixed(2)}</Typography>
-      <Typography variant="h5">Final total: ${Number(finalTotal).toFixed(2)}</Typography>
+      {coupon && <Typography>Desconto: {coupon.discountPercent}%</Typography>}
+      <Typography variant="h6">
+        Total: {formatCurrencyBRL(cartTotal)}
+      </Typography>
+      <Typography variant="h5">
+        Total final: {formatCurrencyBRL(finalTotal)}
+      </Typography>
 
       {items.length === 0 ? (
-        <Button variant="contained" disabled>Checkout</Button>
+        <Button variant="contained" disabled>
+          Finalizar compra
+        </Button>
       ) : (
         <Link href="/checkout">
-          <Button variant="contained">Checkout</Button>
+          <Button variant="contained">Finalizar compra</Button>
         </Link>
       )}
     </Container>

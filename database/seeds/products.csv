@@ -1,9 +1,31 @@
 title,price,image,description
-Basic T-Shirt,59.90,https://picsum.photos/seed/shirt/400/300,100% cotton basic t-shirt
-Slim Jeans,149.90,https://picsum.photos/seed/jeans/400/300,Slim fit stretch jeans
-Casual Sneakers,199.90,https://picsum.photos/seed/sneakers/400/300,Comfortable everyday sneakers
-Hoodie,129.90,https://picsum.photos/seed/hoodie/400/300,Fleece hoodie with front pocket
-Leather Belt,79.90,https://picsum.photos/seed/belt/400/300,Genuine leather belt
-Sports Shorts,89.90,https://picsum.photos/seed/shorts/400/300,Breathable training shorts
-Wrist Watch,249.90,https://picsum.photos/seed/watch/400/300,Water-resistant analog watch
-Cap,49.90,https://picsum.photos/seed/cap/400/300,Adjustable cotton cap
+Camiseta Básica,59.90,https://loremflickr.com/400/300/tshirt?lock=1,camiseta básica de algodão
+Calça Jeans Slim,149.90,https://loremflickr.com/400/300/jeans?lock=2,jeans slim com elastano
+Tênis Casual,199.90,https://loremflickr.com/400/300/sneakers?lock=3,tênis confortável para o dia a dia
+Moletom,129.90,https://loremflickr.com/400/300/hoodie?lock=4,moletom em fleece com bolso frontal
+Cinto de Couro,79.90,https://loremflickr.com/400/300/belt?lock=5,cinto de couro legítimo
+Shorts Esportivos,89.90,https://loremflickr.com/400/300/shorts?lock=6,shorts leves para treino
+Relógio de Pulso,249.90,https://loremflickr.com/400/300/watch?lock=7,relógio analógico resistente à água
+Boné,49.90,https://loremflickr.com/400/300/cap?lock=8,boné de algodão ajustável
+Camisa Polo,89.90,https://loremflickr.com/400/300/polo?lock=9,camisa polo piquê clássica
+Jaqueta Jeans,219.90,https://loremflickr.com/400/300/denimjacket?lock=10,jaqueta jeans azul estilosa
+Tênis de Corrida,299.90,https://loremflickr.com/400/300/running-shoes?lock=11,tênis leve para corrida
+Calça Chino,139.90,https://loremflickr.com/400/300/chinos?lock=12,calça chino slim casual
+Camisa Social,119.90,https://loremflickr.com/400/300/dress-shirt?lock=13,camisa social de manga longa
+Shorts Cargo,99.90,https://loremflickr.com/400/300/cargo-shorts?lock=14,shorts cargo com bolsos múltiplos
+Gorro,39.90,https://loremflickr.com/400/300/beanie?lock=15,gorro de tricô para dias frios
+Óculos de Sol,159.90,https://loremflickr.com/400/300/sunglasses?lock=16,óculos de sol com proteção UV
+Mochila,179.90,https://loremflickr.com/400/300/backpack?lock=17,mochila resistente para o dia a dia
+Camiseta Estampada,69.90,https://loremflickr.com/400/300/graphic-tee?lock=18,camiseta de algodão com estampa
+Jaqueta Esportiva,189.90,https://loremflickr.com/400/300/track-jacket?lock=19,jaqueta esportiva com zíper
+Calça Jogger,129.90,https://loremflickr.com/400/300/jogger-pants?lock=20,calça jogger confortável
+Carteira de Couro,69.90,https://loremflickr.com/400/300/wallet?lock=21,carteira de couro compacta
+Chinelo,39.90,https://loremflickr.com/400/300/flip-flops?lock=22,chinelo confortável para praia
+Casaco de Inverno,399.90,https://loremflickr.com/400/300/winter-coat?lock=23,casaco térmico para o frio
+Calça Social,169.90,https://loremflickr.com/400/300/trousers?lock=24,calça alfaiatada clássica
+Regata de Treino,59.90,https://loremflickr.com/400/300/tank-top?lock=25,regata com tecido respirável
+Mala Duffel,149.90,https://loremflickr.com/400/300/duffel-bag?lock=26,mala duffel espaçosa para academia
+Kit de Meias,29.90,https://loremflickr.com/400/300/socks?lock=27,kit com cinco pares de meias
+Bota de Couro,329.90,https://loremflickr.com/400/300/boots?lock=28,bota de couro legítimo e resistente
+Jaqueta Corta-Vento,219.90,https://loremflickr.com/400/300/rain-jacket?lock=29,jaqueta impermeável e leve
+Tênis Canvas,139.90,https://loremflickr.com/400/300/canvas-shoes?lock=30,tênis casual de lona

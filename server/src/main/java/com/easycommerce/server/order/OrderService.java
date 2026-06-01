@@ -1,15 +1,17 @@
 package com.easycommerce.server.order;
 
-import com.easycommerce.server.cart.Cart;
-import com.easycommerce.server.cart.CartItem;
-import com.easycommerce.server.cart.CartService;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.easycommerce.server.cart.Cart;
+import com.easycommerce.server.cart.CartItem;
+import com.easycommerce.server.cart.CartService;
 
 @Service
 public class OrderService {
@@ -52,13 +54,12 @@ public class OrderService {
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
         order.setTotal(finalTotal);
 
-        cart.getItems().forEach(cartItem -> order.getItems().add(new OrderItem(
+        cart.getItems().forEach(cartItem -> order.addItem(new OrderItem(
                 order,
                 cartItem.getProduct().getId(),
                 cartItem.getProduct().getTitle(),
                 cartItem.getProduct().getPrice(),
-                cartItem.getQuantity()
-        )));
+                cartItem.getQuantity())));
 
         OrderEntity savedOrder = orderRepository.save(order);
         cartService.clearCart(clientId);
@@ -84,8 +85,7 @@ public class OrderService {
                         item.getTitle(),
                         item.getUnitPrice(),
                         item.getQuantity(),
-                        item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
-                ))
+                        item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()))))
                 .toList();
 
         return new OrderSummaryResponse(
@@ -101,7 +101,6 @@ public class OrderService {
                 order.getZipCode(),
                 order.getPaymentMethod(),
                 order.getTotal(),
-                items
-        );
+                items);
     }
 }
