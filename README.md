@@ -1,6 +1,6 @@
 # EasyCommerce
 
-EasyCommerce is an academic project that implements a simplified e-commerce flow with a split architecture:
+EasyCommerce is an academic project developed by **Gabriel de Freitas Adolfo** and **Julian Rafael de Souza** for **2026/1 - Engenharia de Software: Implementação e Teste** class at **Universidade do Vale do Rio dos Sinos (UNISINOS)** with professor **Tatiane Coreixas de Moraes** that implements a simplified e-commerce flow with a split architecture:
 
 - `database`: PostgreSQL initialization and seed data
 - `server`: Java Spring Boot backend
