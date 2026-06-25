@@ -41,7 +41,7 @@ const labels = {
 };
 
 export default function CheckoutPage() {
-  const { items, finalTotal, isLoading } = useCart();
+  const { items, finalTotal, isLoading, refreshCart } = useCart();
   const [form, setForm] = useState(emptyForm);
   const [paymentMethod, setPaymentMethod] = useState("pix");
   const [errors, setErrors] = useState({});
@@ -86,6 +86,7 @@ export default function CheckoutPage() {
 
       setOrderSummary(data);
       setCompleted(true);
+      refreshCart();
     } catch {
       setApiError(
         "Não foi possível finalizar a compra. Verifique os dados e tente novamente."
